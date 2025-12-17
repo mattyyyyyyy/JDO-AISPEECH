@@ -1,0 +1,7 @@
+{
+  "name": "Audio Spark - AIGC Platform",
+  "description": "A comprehensive AIGC audio platform featuring ASR, TTS, Voice Cloning, and Voiceprint Recognition with an immersive dark glassmorphism design.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
