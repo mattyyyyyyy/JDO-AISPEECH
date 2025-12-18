@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+
+import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { Voice } from '../types';
 
 interface PlayerContextType {
@@ -23,7 +24,6 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialize audio element
   useEffect(() => {
     audioRef.current = new Audio();
     const audio = audioRef.current;
@@ -44,49 +44,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
   }, []);
 
-  const safePlay = async () => {
+  const safePlay = useCallback(async () => {
     if (!audioRef.current) return;
     try {
       await audioRef.current.play();
     } catch (error: any) {
-      // Ignore AbortError which happens if pause() is called while playing
       if (error.name !== 'AbortError') {
         console.error("Playback failed:", error);
         setIsPlaying(false);
       }
     }
-  };
+  }, []);
 
-  const playVoice = (voice: Voice) => {
+  const togglePlay = useCallback(() => {
     if (!audioRef.current) return;
-
-    // If clicking the same voice, toggle play/pause
-    if (currentVoice?.id === voice.id) {
-      togglePlay();
-      return;
-    }
-
-    const audio = audioRef.current;
-    
-    // Pause current playback to avoid interference
-    audio.pause();
-
-    // Set new voice and play
-    // Fallback to a reliable MP3
-    const url = voice.previewUrl || "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3";
-    
-    audio.src = url;
-    audio.load();
-    
-    setCurrentVoice(voice);
-    setIsPlaying(true);
-    
-    safePlay();
-  };
-
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
@@ -94,33 +65,54 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setIsPlaying(true);
       safePlay();
     }
-  };
+  }, [isPlaying, safePlay]);
 
-  const seek = (time: number) => {
+  const playVoice = useCallback((voice: Voice) => {
+    if (!audioRef.current) return;
+
+    if (currentVoice?.id === voice.id) {
+      togglePlay();
+      return;
+    }
+
+    const audio = audioRef.current;
+    audio.pause();
+
+    const url = voice.previewUrl || "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3";
+    
+    audio.src = url;
+    audio.load();
+    
+    setCurrentVoice(voice);
+    setIsPlaying(true);
+    safePlay();
+  }, [currentVoice, togglePlay, safePlay]);
+
+  const seek = useCallback((time: number) => {
     if (!audioRef.current) return;
     const newTime = Math.max(0, Math.min(time, audioRef.current.duration));
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
-  };
+  }, []);
 
-  const forward = (seconds: number) => {
+  const forward = useCallback((seconds: number) => {
     if (!audioRef.current) return;
     seek(audioRef.current.currentTime + seconds);
-  };
+  }, [seek]);
 
-  const rewind = (seconds: number) => {
+  const rewind = useCallback((seconds: number) => {
     if (!audioRef.current) return;
     seek(audioRef.current.currentTime - seconds);
-  };
+  }, [seek]);
 
-  const closePlayer = () => {
+  const closePlayer = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     setCurrentVoice(null);
-  };
+  }, []);
 
   return (
     <PlayerContext.Provider value={{ 

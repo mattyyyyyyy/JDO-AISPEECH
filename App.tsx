@@ -32,19 +32,20 @@ import { Page, AppModule } from './types';
 const AppContent: React.FC = () => {
   const { currentModule } = useModule();
   const { closePlayer } = usePlayer();
-  const [currentPage, setCurrentPage] = useState<Page>(Page.HOME);
+  
+  const [currentPage, setCurrentPage] = useState<Page>(
+    currentModule === AppModule.PROMPT_LIBRARY ? Page.PROMPT_DISCOVER : Page.HOME
+  );
 
-  // Stop any active playback when switching top-level modules
+  // CRITICAL: Only reset page and close player when TOP-LEVEL module changes
   useEffect(() => {
     closePlayer();
-    
-    // Set default sub-page when switching modules
     if (currentModule === AppModule.AI_VOICE) {
       setCurrentPage(Page.HOME);
     } else if (currentModule === AppModule.PROMPT_LIBRARY) {
       setCurrentPage(Page.PROMPT_DISCOVER);
     }
-  }, [currentModule, closePlayer]);
+  }, [currentModule]); // Do NOT add closePlayer to dependencies here
 
   const renderAiVoiceModule = () => {
     const renderSubPage = () => {
@@ -70,8 +71,8 @@ const AppContent: React.FC = () => {
           <div className="flex-1 overflow-hidden flex flex-col">
             {renderSubPage()}
           </div>
-          <VoicePlayer />
         </main>
+        <VoicePlayer />
       </>
     );
   };

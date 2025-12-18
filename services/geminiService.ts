@@ -1,9 +1,10 @@
 
-import { GoogleGenAI } from "@google/genai";
+// Fix: Import Modality and Type to comply with @google/genai guidelines
+import { GoogleGenAI, Modality, Type } from "@google/genai";
 
+// Fix: Simplified initialization to use process.env.API_KEY directly as per guidelines
 const getAIClient = () => {
-  const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : '';
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 };
 
 // Map UI voice names to valid Gemini API voice names
@@ -43,7 +44,8 @@ export const generateSpeech = async (text: string, voiceName: string = 'Kore') =
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: text }] }],
       config: {
-        responseModalities: ['AUDIO'] as any, 
+        // Fix: Use Modality.AUDIO from @google/genai instead of string literals
+        responseModalities: [Modality.AUDIO], 
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: apiVoiceName },
@@ -76,6 +78,7 @@ export const translateContent = async (text: string, targetLanguage: string) => 
       model: "gemini-3-flash-preview",
       contents: prompt,
     });
+    // Fix: Access response.text property directly as per guidelines (not a method)
     return response.text?.trim() || text;
   } catch (error) {
     return handleApiError(error, "Translation");
@@ -85,7 +88,7 @@ export const translateContent = async (text: string, targetLanguage: string) => 
 // Diarization
 export const analyzeConversation = async (audioBase64: string, mimeType: string) => {
   const ai = getAIClient();
-  const prompt = `Analyze this audio. Format output as JSON array of objects: {"speaker": "Speaker 1", "text": "...", "startTime": 0, "endTime": 1}`;
+  const prompt = `Analyze this audio and extract the conversation.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -93,8 +96,25 @@ export const analyzeConversation = async (audioBase64: string, mimeType: string)
       contents: {
         parts: [{ inlineData: { mimeType, data: audioBase64 } }, { text: prompt }]
       },
-      config: { responseMimeType: "application/json" }
+      // Fix: Implement responseSchema to ensure structured JSON output for diarization
+      config: { 
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              speaker: { type: Type.STRING },
+              text: { type: Type.STRING },
+              startTime: { type: Type.NUMBER },
+              endTime: { type: Type.NUMBER }
+            },
+            required: ["speaker", "text", "startTime", "endTime"]
+          }
+        }
+      }
     });
+    // Fix: Access response.text property directly
     return JSON.parse(response.text || "[]");
   } catch (error) {
     return handleApiError(error, "Diarization");

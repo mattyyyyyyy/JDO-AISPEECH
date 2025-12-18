@@ -68,12 +68,12 @@ const VoiceSidebar: React.FC<VoiceSidebarProps> = ({ currentPage, onNavigate }) 
 
   return (
     <>
-    <aside className="w-72 h-[calc(100vh-5rem)] fixed left-0 top-20 z-30 flex flex-col glass-panel border-r border-white/10 bg-[#020204]/80 backdrop-blur-2xl">
+    <aside className="w-72 h-[calc(100vh-5rem)] fixed left-0 top-20 z-30 flex flex-col glass-panel bg-[#020204] border-none transform-gpu translate-z-0">
       <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto custom-scrollbar">
         {NAV_GROUPS.map((group, idx) => (
-          <div key={idx}>
+          <div key={idx} className="bg-transparent border-none">
             {group.title !== '主菜单' && (
-              <div className="text-xs font-bold text-white/40 px-4 mb-3 uppercase tracking-[0.2em]">
+              <div className="text-xs font-bold text-white/30 px-4 mb-3 uppercase tracking-[0.2em] select-none bg-transparent border-none pointer-events-none">
                 {t(getTranslationKey(group.id))}
               </div>
             )}
@@ -86,13 +86,13 @@ const VoiceSidebar: React.FC<VoiceSidebarProps> = ({ currentPage, onNavigate }) 
                     key={item.id}
                     onClick={() => onNavigate(item.id as Page)}
                     className={`
-                      w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 text-base font-medium group relative border
+                      w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-150 text-base font-medium group relative
                       ${isActive 
-                        ? 'bg-spark-accent/20 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] border-white/10' 
-                        : 'border-transparent text-white/70 hover:text-white hover:bg-white/5'}
+                        ? 'bg-spark-accent/20 text-white shadow-none' 
+                        : 'text-white/50 hover:text-white hover:bg-white/5'}
                     `}
                   >
-                    <Icon size={20} className={`transition-colors ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`} />
+                    <Icon size={20} className={`transition-colors ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white'}`} />
                     {t(getTranslationKey(item.id))}
                   </button>
                 );
@@ -113,7 +113,7 @@ const VoiceSidebar: React.FC<VoiceSidebarProps> = ({ currentPage, onNavigate }) 
     </aside>
 
     {showSettings && createPortal(
-       <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in">
+       <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="absolute inset-0" onClick={() => setShowSettings(false)}></div>
           <div className="relative w-[600px] h-[70vh] bg-[#12141a] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#161618]">

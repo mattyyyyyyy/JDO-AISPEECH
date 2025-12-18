@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { AppModule } from '../types';
 
@@ -9,8 +10,8 @@ interface ModuleContextType {
 const ModuleContext = createContext<ModuleContextType | undefined>(undefined);
 
 export const ModuleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Default to DIGITAL_HUMAN as it is the Core module now
-  const [currentModule, setModule] = useState<AppModule>(AppModule.DIGITAL_HUMAN);
+  // Default to AI_VOICE as requested by user
+  const [currentModule, setModule] = useState<AppModule>(AppModule.AI_VOICE);
 
   return (
     <ModuleContext.Provider value={{ currentModule, setModule }}>

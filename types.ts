@@ -37,6 +37,8 @@ export interface Voice {
   avatarUrl: string;
   isCustom?: boolean;
   isFavorite?: boolean;
+  // Fix: Added isPublic property to Voice interface to support public/private voice models
+  isPublic?: boolean;
   flag?: string; // e.g., '🇨🇳' or '🇺🇸'
   description?: string; // Specific description from voice data
   source?: 'preset' | 'community' | 'custom'; // Data source categorization
