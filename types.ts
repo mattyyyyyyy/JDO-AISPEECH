@@ -1,16 +1,30 @@
+
 export enum Page {
+  // Voice Module Sub-pages
   HOME = 'HOME',
-  // Libraries
   DISCOVER = 'DISCOVER',
   PRESET = 'PRESET',
   CUSTOM = 'CUSTOM',
   FAVORITES = 'FAVORITES',
-  // Capabilities
   ASR = 'ASR',
   TTS = 'TTS',
   VOICE_CLONING = 'VOICE_CLONING',
   DIARIZATION = 'DIARIZATION',
+  
+  // Prompt Module Sub-pages
+  PROMPT_DISCOVER = 'PROMPT_DISCOVER',
+  PROMPT_FAVORITES = 'PROMPT_FAVORITES',
+  PROMPT_MINE = 'PROMPT_MINE',
+  PROMPT_CREATE = 'PROMPT_CREATE',
 }
+
+export enum AppModule {
+  DIGITAL_HUMAN = 'DIGITAL_HUMAN',
+  AI_VOICE = 'AI_VOICE',
+  PROMPT_LIBRARY = 'PROMPT_LIBRARY'
+}
+
+export type PromptView = 'HOME' | 'FAVORITES' | 'MINE' | 'CREATE';
 
 export interface Voice {
   id: string;
@@ -58,4 +72,21 @@ export interface CloneProject {
   file?: File;
   createdAt: number;
   avatarUrl?: string;
+}
+
+export interface PromptItem {
+  id: string;
+  title: string;
+  category: string;
+  tags: string[];
+  description: string;
+  usageCount: string;
+  isFavorite: boolean;
+  author: string; 
+  isPublic: boolean;
+  createdAt: number;
+  votes?: number;
+  imageUrl?: string;
+  model?: string; // Added model support
+  notes?: string; // Added notes support
 }

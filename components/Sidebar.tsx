@@ -69,8 +69,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
 
   return (
     <>
-    {/* Sidebar Adjusted: top-16 to sit below header, height calc(100vh - 4rem) */}
-    <aside className="w-72 h-[calc(100vh-4rem)] fixed left-0 top-16 z-30 flex flex-col glass-panel border-r border-white/10 bg-[#020204]/80 backdrop-blur-2xl">
+    {/* Sidebar Adjusted: top-20 (80px) to sit below taller header, height calc(100vh - 5rem) */}
+    <aside className="w-72 h-[calc(100vh-5rem)] fixed left-0 top-20 z-30 flex flex-col glass-panel border-r border-white/10 bg-[#020204]/80 backdrop-blur-2xl">
       {/* Logo Removed from here */}
 
       <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto custom-scrollbar">

@@ -12,8 +12,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [lang, setLang] = useState<Language>('CN');
 
+  // Use type casting to ensure translations object is correctly indexed with union types
   const t = (key: TranslationKey): string => {
-    return translations[lang][key] || key;
+    return (translations[lang] as any)[key] || key;
   };
 
   return (
